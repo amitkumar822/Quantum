@@ -27,6 +27,14 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["Refreshing_user"],
     }),
+    logoutUser: builder.mutation({
+      query: (formData) => ({
+        url: "/logout",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Refreshing_user"],
+    }),
     getALlUsers: builder.query({
       query: () => ({
         url: "/get-all-users",
@@ -55,6 +63,7 @@ export const userApi = createApi({
 export const {
   useRegistrationMutation,
   useLoginMutation,
+  useLogoutUserMutation,
   useGetALlUsersQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,

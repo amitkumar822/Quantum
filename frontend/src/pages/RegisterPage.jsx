@@ -17,7 +17,8 @@ import {
 } from "lucide-react";
 import { useRegistrationMutation } from "@/redux/api/userApi";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { userLoggedIn } from "@/redux/store/authSlice";
+import { useDispatch } from "react-redux";
 
 const formSchema = z
   .object({
@@ -34,7 +35,7 @@ const formSchema = z
   });
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [imagePreview, setImagePreview] = useState(null);
 
   const {
@@ -82,7 +83,9 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (isSuccess) {
-      navigate("/login");
+      const userData = data?.data?.userData;
+
+      dispatch(userLoggedIn({ user: userData }));
       toast.success(data?.message || "User successfully Registered");
       reset();
     } else if (error) {

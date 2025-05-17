@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Rocket } from "lucide-react";
+import Logout from "@/components/Logout";
 
 const Header = () => {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
@@ -49,7 +50,12 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {["Home", "Services", "About", "Work", "Contact"].map((item) => (
-              <Link to={item.toLowerCase() === 'home' ? '/' : `/${item.toLowerCase()}`} key={item}>
+              <Link
+                to={
+                  item.toLowerCase() === "home" ? "/" : `/${item.toLowerCase()}`
+                }
+                key={item}
+              >
                 <motion.span
                   whileHover={{ scale: 1.05, color: "#6D28D9" }}
                   className="font-medium text-gray-700 hover:text-primary transition-colors"
@@ -69,15 +75,10 @@ const Header = () => {
             <div className="hidden md:flex items-center space-x-1">
               {isAuthenticated ? (
                 <>
-                  <Button
-                    variant="destructive"
-                    className="cursor-pointer"
-                    onClick={handleLogOut}
-                  >
-                    Logout
-                  </Button>
-                  <Link to='/dashboard'><Button>Dashboard</Button></Link>
-                  
+                  <Logout />
+                  <Link to="/dashboard">
+                    <Button>Dashboard</Button>
+                  </Link>
                 </>
               ) : (
                 <>
@@ -156,13 +157,7 @@ const Header = () => {
               <>
                 {isAuthenticated ? (
                   <>
-                    <Button
-                      variant="destructive"
-                      className="cursor-pointer"
-                      onClick={handleLogOut}
-                    >
-                      Logout
-                    </Button>
+                    <Logout />
 
                     <Button>Dashboard</Button>
                   </>

@@ -37,11 +37,11 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success(data?.message || "User successfully login");
       const userData = data?.data?.userData;
 
       dispatch(userLoggedIn({ user: userData }));
       reset();
+      toast.success(data?.message || "User successfully login");
     } else if (error) {
       alert(error?.data?.message || "Failed to login");
     }
