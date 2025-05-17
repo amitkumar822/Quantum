@@ -32,6 +32,7 @@ export const userApi = createApi({
         url: "/get-all-users",
         method: "GET",
       }),
+      providesTags: ["Refreshing_user"]
     }),
   }),
 });

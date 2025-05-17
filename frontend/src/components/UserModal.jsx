@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,9 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImagePlus, Trash2, Mail, User } from "lucide-react";
+import { ImagePlus, Trash2, Mail, User, Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { useRegistrationMutation } from "@/redux/api/userApi";
 
 // 🧠 Schema
 const schema = z
@@ -44,13 +46,6 @@ const UserModal = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    console.log("User Form Data: ", { ...data, profile: image });
-    reset();
-    setImage(null);
-    setOpen(false);
-  };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -64,10 +59,28 @@ const UserModal = () => {
     setValue("profile", null);
   };
 
+  const [registration, { data, isLoading, isSuccess, error }] =
+    useRegistrationMutation();
+
+  const onSubmit = async (formData) => {
+    await registration(formData);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset();
+      setImage(null);
+      setOpen(false);
+      toast.success(data?.message || "User successfully Registered");
+    } else if (error) {
+      alert(error?.data?.message || "Failed to Registered");
+    }
+  }, [error, isSuccess]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-violet-600 hover:bg-violet-700 text-white font-semibold">
+        <Button className="bg-violet-600 hover:bg-violet-700 text-white font-semibold cursor-pointer">
           Add New User
         </Button>
       </DialogTrigger>
@@ -189,15 +202,22 @@ const UserModal = () => {
           <motion.div whileTap={{ scale: 0.97 }}>
             <Button
               type="submit"
-              className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+              disabled={isLoading}
+              className="w-full bg-violet-600 hover:bg-violet-700 text-white cursor-pointer"
             >
-              Submit
+              {isLoading ? (
+                <span className="flex justify-center items-center gap-2">
+                  <Loader2 className="animate-spin" /> Please wait...
+                </span>
+              ) : (
+                "Submit"
+              )}
             </Button>
           </motion.div>
         </form>
       </DialogContent>
     </Dialog>
   );
-}
+};
 
-export default UserModal
+export default UserModal;

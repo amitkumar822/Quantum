@@ -31,7 +31,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   const cloudinarResponse = await uploadOnCloudinary(profile?.path);
-  
+
   if (cloudinarResponse === null && profile) {
     throw new ApiError(400, "Failed to upload profile!");
   }
@@ -134,7 +134,7 @@ export const getUserDetails = asyncHandler(async (req, res) => {
 });
 
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.find().lean();
+  const users = await User.find().sort({ createdAt: -1 }).lean();
 
   if (!users) throw new ApiError(404, "No Users Found!");
 

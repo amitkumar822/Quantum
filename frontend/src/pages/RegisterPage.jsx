@@ -198,7 +198,7 @@ export default function RegisterPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-cyan-400 hover:bg-cyan-500 text-white font-bold cursor-pointer"
+              className="w-full bg-cyan-400 hover:bg-cyan-500 text-white font-bold cursor-pointer contain-paint"
             >
               {isLoading ? (
                 <span className="flex justify-center items-center gap-2">

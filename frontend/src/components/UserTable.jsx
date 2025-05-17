@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import UserModal from "./UserModal";
 import { useGetALlUsersQuery } from "@/redux/api/userApi";
 import { highlightText } from "@/helpers/highLightText";
+import { Badge } from "@/components/ui/badge";
 
 const UserTable = () => {
   // Fetch class details from the database using a query hook
@@ -232,6 +233,20 @@ const UserTable = () => {
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-gray-50"
+                onClick={() => requestSort("status")}
+              >
+                <div className="flex items-center">
+                  Status
+                  {sortConfig.key === "status" &&
+                    (sortConfig.direction === "asc" ? (
+                      <ChevronUp className="h-4 w-4 ml-1" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 ml-1" />
+                    ))}
+                </div>
+              </TableHead>
+              <TableHead
+                className="cursor-pointer hover:bg-gray-50"
                 onClick={() => requestSort("createdAt")}
               >
                 <div className="flex items-center">
@@ -277,6 +292,14 @@ const UserTable = () => {
                     >
                       {item.role}
                     </span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={item.status ? "default" : "secondary"}
+                      className={item.status ? "bg-green-500" : "bg-gray-400"}
+                    >
+                      {item.status ? "Active" : "Inactive"} {item?.status}
+                    </Badge>
                   </TableCell>
                   <TableCell>{formatDate(item.createdAt)}</TableCell>
                   <TableCell className="text-right">
@@ -369,47 +392,3 @@ const UserTable = () => {
 };
 
 export default UserTable;
-
-// Sample data
-const initialData = [
-  {
-    id: 1,
-    name: "Alex Johnson",
-    email: "alex@example.com",
-    dob: "1990-05-15",
-    role: "Admin",
-    createdAt: "2023-01-10",
-  },
-  {
-    id: 2,
-    name: "Sarah Miller",
-    email: "sarah@example.com",
-    dob: "1988-11-22",
-    role: "Editor",
-    createdAt: "2023-02-15",
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    email: "michael@example.com",
-    dob: "1992-07-30",
-    role: "Viewer",
-    createdAt: "2023-03-20",
-  },
-  {
-    id: 4,
-    name: "Emma Wilson",
-    email: "emma@example.com",
-    dob: "1995-02-18",
-    role: "Editor",
-    createdAt: "2023-04-05",
-  },
-  {
-    id: 5,
-    name: "David Brown",
-    email: "david@example.com",
-    dob: "1985-09-12",
-    role: "Admin",
-    createdAt: "2023-05-12",
-  },
-];

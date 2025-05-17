@@ -10,6 +10,7 @@ import { useLoginMutation } from "@/redux/api/userApi";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { userLoggedIn } from "@/redux/store/authSlice";
+import { useNavigate } from "react-router";
 
 // Zod schema for login
 const loginSchema = z.object({
