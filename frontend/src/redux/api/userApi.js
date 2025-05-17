@@ -27,7 +27,17 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["Refreshing_user"],
     }),
+    getALlUsers: builder.query({
+      query: () => ({
+        url: "/get-all-users",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useRegistrationMutation, useLoginMutation } = userApi;
+export const {
+  useRegistrationMutation,
+  useLoginMutation,
+  useGetALlUsersQuery,
+} = userApi;

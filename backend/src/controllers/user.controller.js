@@ -31,11 +31,10 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   const cloudinarResponse = await uploadOnCloudinary(profile?.path);
-  console.log("cloudinary: ", cloudinarResponse);
   
-  // if (cloudinarResponse === null) {
-  //   throw new ApiError(400, "Failed to upload profile!");
-  // }
+  if (cloudinarResponse === null && profile) {
+    throw new ApiError(400, "Failed to upload profile!");
+  }
 
   const newUser = new User({
     name,

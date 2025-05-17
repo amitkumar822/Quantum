@@ -106,7 +106,7 @@ const Homepage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white overflow-hidden sidebar-thin">
       {/* Hero Section */}
       <section id="home" className="pt-32 pb-20 md:pt-40 md:pb-28 px-4">
         <div className="container mx-auto">
