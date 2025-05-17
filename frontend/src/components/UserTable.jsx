@@ -45,9 +45,6 @@ const UserTable = () => {
   // Fetch class details from the database using a query hook
   const { data: allUserDetails } = useGetALlUsersQuery();
 
-  // ==========================
-
-  // State
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -222,6 +219,7 @@ const UserTable = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Profile</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-gray-50"
                 onClick={() => requestSort("name")}
@@ -301,7 +299,7 @@ const UserTable = () => {
               filteredData?.map((item) => (
                 <TableRow key={item._id}>
                   {/* Highlight Full Name */}
-                  <span className="flex items-center p-1">
+                  <TableCell>
                     {item?.profile?.url ? (
                       <img
                         className="w-10 h-10 rounded-full"
@@ -312,28 +310,20 @@ const UserTable = () => {
                       <>
                         <span className="w-10 h-10 rounded-full bg-blue-200/60 flex items-center justify-center">
                           {item?.name
-                          ?.split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .toUpperCase()}
+                            ?.split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()}
                         </span>
                       </>
                     )}
-                    {/* <img
-                      className="w-10 h-10 rounded-full"
-                      src={
-                        item?.profile?.url ||
-                        "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?t=st=1747482823~exp=1747486423~hmac=c48a7797e68a31b36b1927fa12df9e68412afecb42cd9f487c3d6aa09c506bd0&w=1800"
-                      }
-                      alt=""d
-                    /> */}
-                    <TableCell
-                      className="font-medium"
-                      dangerouslySetInnerHTML={{
-                        __html: highlightText(item.name, searchTerm.trim()),
-                      }}
-                    />
-                  </span>
+                  </TableCell>
+                  <TableCell
+                    className="font-medium"
+                    dangerouslySetInnerHTML={{
+                      __html: highlightText(item.name, searchTerm.trim()),
+                    }}
+                  />
                   {/* Highlight Email */}
                   <TableCell
                     className="font-medium"

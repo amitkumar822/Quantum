@@ -9,80 +9,48 @@ import {
   Mail,
   ChevronLeft,
   ChevronRight,
+  ShieldCheck,
+  UserCheck,
+  UserCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import UserTable from "@/components/UserTable";
 import { useSelector } from "react-redux";
+import { useGetALlUsersQuery } from "@/redux/api/userApi";
 
 const Dashboard = () => {
+  // Fetch class details from the database using a query hook
+  const { data: allUserDetails } = useGetALlUsersQuery();
+  const users = allUserDetails?.data || [];
+
+  const totalUsersAndAdmins = users.length;
+  const totalAdmins = users.filter((user) => user.role === "ADMIN").length;
+  const activeUsers = users.filter((user) => user.status === true).length;
+
   const { user } = useSelector((state) => state.auth);
-  console.log("user: ", user);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Sample data
-  const projects = [
-    { name: "Website Redesign", progress: 85, status: "In Progress", team: 5 },
-    { name: "Mobile App", progress: 45, status: "In Progress", team: 3 },
-    { name: "Marketing Campaign", progress: 100, status: "Completed", team: 8 },
-    { name: "API Integration", progress: 30, status: "In Progress", team: 2 },
-  ];
-
-  const activities = [
-    {
-      user: "Alex Johnson",
-      action: "completed the homepage design",
-      time: "2 hours ago",
-    },
-    {
-      user: "Sarah Miller",
-      action: "reviewed the analytics dashboard",
-      time: "4 hours ago",
-    },
-    {
-      user: "Michael Chen",
-      action: "deployed the new API endpoints",
-      time: "1 day ago",
-    },
-    {
-      user: "Emma Wilson",
-      action: "started the mobile app development",
-      time: "2 days ago",
-    },
-  ];
-
   const metrics = [
     {
-      title: "Total Projects",
-      value: "24",
+      title: "Total Users & Admins",
+      value: totalUsersAndAdmins,
       change: "+12%",
-      icon: <FileText className="h-5 w-5" />,
+      icon: <UserCircle2 className="h-5 w-5 text-blue-500" />,
     },
     {
       title: "Active Users",
-      value: "1,243",
+      value: activeUsers,
       change: "+8%",
-      icon: <Users className="h-5 w-5" />,
+      icon: <UserCheck className="h-5 w-5 text-green-500" />,
     },
     {
-      title: "Tasks Completed",
-      value: "89",
+      title: "Total Admins",
+      value: totalAdmins,
       change: "+23%",
-      icon: <BarChart2 className="h-5 w-5" />,
-    },
-    {
-      title: "Revenue",
-      value: "$48,290",
-      change: "+15%",
-      icon: <BarChart2 className="h-5 w-5" />,
+      icon: <ShieldCheck className="h-5 w-5 text-purple-500" />,
     },
   ];
 
@@ -170,14 +138,23 @@ const Dashboard = () => {
             }`}
           >
             <div className="flex items-center">
-              
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <span className="text-primary font-medium">
-                  {user?.profile?.url ? <img className="w-10 h-10 rounded-full" src={user?.profile?.url} alt="" /> : <>{user?.name
-                    ?.split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()}</>}
+                  {user?.profile?.url ? (
+                    <img
+                      className="w-10 h-10 rounded-full"
+                      src={user?.profile?.url}
+                      alt=""
+                    />
+                  ) : (
+                    <>
+                      {user?.name
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()}
+                    </>
+                  )}
                 </span>
               </div>
               {sidebarOpen && (
@@ -215,7 +192,7 @@ const Dashboard = () => {
         </div>
 
         {/* Metrics cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           {metrics.map((metric, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between">
