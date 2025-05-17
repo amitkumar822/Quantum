@@ -32,9 +32,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UserModal from "./UserModal";
-import { useGetALlUsersQuery } from "@/redux/api/userApi";
+import {
+  useDeleteUserMutation,
+  useGetALlUsersQuery,
+} from "@/redux/api/userApi";
 import { highlightText } from "@/helpers/highLightText";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "react-toastify";
+import DeleteModal from "./DeleteModal";
 
 const UserTable = () => {
   // Fetch class details from the database using a query hook
@@ -99,11 +104,6 @@ const UserTable = () => {
     });
   };
 
-  // Handle delete
-  const handleDelete = (id) => {
-    setData(data.filter((item) => item.id !== id));
-  };
-
   // Format date
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
@@ -120,6 +120,35 @@ const UserTable = () => {
 
   // Roles for filter dropdown
   const roles = [...new Set(data?.map((item) => item.role))];
+
+  // Mutation hook for delete user
+  const [deleteUser, { isLoading, isSuccess, error }] = useDeleteUserMutation();
+
+  // 🗑️ Manage delete confirmation modal state
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userId, setUserId] = useState(""); // ID of teacher to delete
+
+  const handleDelete = async () => {
+    await deleteUser(userId);
+  };
+
+  // Edit User Model Open
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setModalOpen(true);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "User successfully delete");
+      setDeleteModalOpen(false);
+    } else if (error) {
+      alert(error?.data?.message || "Failed to delete");
+    }
+  }, [error, isSuccess]);
 
   return (
     <motion.div
@@ -178,7 +207,12 @@ const UserTable = () => {
           </DropdownMenu>
 
           <>
-            <UserModal />
+            <Button
+              onClick={() => setModalOpen(!modalOpen)}
+              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold cursor-pointer"
+            >
+              Add New User
+            </Button>
           </>
         </div>
       </div>
@@ -267,12 +301,39 @@ const UserTable = () => {
               filteredData?.map((item) => (
                 <TableRow key={item._id}>
                   {/* Highlight Full Name */}
-                  <TableCell
-                    className="font-medium"
-                    dangerouslySetInnerHTML={{
-                      __html: highlightText(item.name, searchTerm.trim()),
-                    }}
-                  />
+                  <span className="flex items-center p-1">
+                    {item?.profile?.url ? (
+                      <img
+                        className="w-10 h-10 rounded-full"
+                        src={item?.profile?.url}
+                        alt=""
+                      />
+                    ) : (
+                      <>
+                        <span className="w-10 h-10 rounded-full bg-blue-200/60 flex items-center justify-center">
+                          {item?.name
+                          ?.split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()}
+                        </span>
+                      </>
+                    )}
+                    {/* <img
+                      className="w-10 h-10 rounded-full"
+                      src={
+                        item?.profile?.url ||
+                        "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?t=st=1747482823~exp=1747486423~hmac=c48a7797e68a31b36b1927fa12df9e68412afecb42cd9f487c3d6aa09c506bd0&w=1800"
+                      }
+                      alt=""d
+                    /> */}
+                    <TableCell
+                      className="font-medium"
+                      dangerouslySetInnerHTML={{
+                        __html: highlightText(item.name, searchTerm.trim()),
+                      }}
+                    />
+                  </span>
                   {/* Highlight Email */}
                   <TableCell
                     className="font-medium"
@@ -309,7 +370,8 @@ const UserTable = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-8 w-8 cursor-pointer"
+                            onClick={() => handleEdit(item)}
                           >
                             <Edit className="h-4 w-4 text-blue-500" />
                           </Button>
@@ -324,8 +386,10 @@ const UserTable = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
-                            onClick={() => handleDelete(item.id)}
+                            className="h-8 w-8 cursor-pointer"
+                            onClick={() => {
+                              setDeleteModalOpen(true), setUserId(item?._id);
+                            }}
                           >
                             <Trash2 className="h-4 w-4 text-red-500" />
                           </Button>
@@ -334,28 +398,6 @@ const UserTable = () => {
                           <p>Delete</p>
                         </TooltipContent>
                       </Tooltip>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-500">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -387,6 +429,18 @@ const UserTable = () => {
           </Button>
         </div>
       </div>
+
+      {/* Class Delete Model */}
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        message={"User"}
+        isPending={isLoading}
+      />
+
+      {/* Edit user model */}
+      <UserModal user={selectedUser} open={modalOpen} setOpen={setModalOpen} />
     </motion.div>
   );
 };

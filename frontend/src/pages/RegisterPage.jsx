@@ -26,6 +26,7 @@ const formSchema = z
     email: z.string().email("Invalid email"),
     password: z.string().min(4, "Password must be at least 4 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
+    profile: z.any().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -61,18 +62,29 @@ export default function RegisterPage() {
     setValue("profile", null);
   };
 
+  // Mutation hook for adding a new user
   const [registration, { data, isLoading, isSuccess, error }] =
     useRegistrationMutation();
 
   const onSubmit = async (formData) => {
-    await registration(formData);
+    const payload = new FormData();
+    payload.append("name", formData.name);
+    payload.append("dob", formData.dob);
+    payload.append("email", formData.email);
+    payload.append("password", formData.password);
+    payload.append("confirmPassword", formData.confirmPassword);
+    if (formData.profile) {
+      payload.append("profile", formData.profile);
+    }
+
+    await registration(payload);
   };
 
   useEffect(() => {
     if (isSuccess) {
-      // navigate("/login");
+      navigate("/login");
       toast.success(data?.message || "User successfully Registered");
-      // reset();
+      reset();
     } else if (error) {
       alert(error?.data?.message || "Failed to Registered");
     }
@@ -166,7 +178,9 @@ export default function RegisterPage() {
 
             {/* Profile Image Upload */}
             <div>
-              <Label className="text-gray-300 mb-1 block">Upload Profile {isLoading}</Label>
+              <Label className="text-gray-300 mb-1 block">
+                Upload Profile {isLoading}
+              </Label>
               <div className="flex items-center gap-2">
                 <ImageIcon className="text-gray-400" />
                 <Input
@@ -202,7 +216,7 @@ export default function RegisterPage() {
             >
               {isLoading ? (
                 <span className="flex justify-center items-center gap-2">
-                  <Loader2 className="animate-spin" /> Please wait... 
+                  <Loader2 className="animate-spin" /> Please wait...
                 </span>
               ) : (
                 "Register"

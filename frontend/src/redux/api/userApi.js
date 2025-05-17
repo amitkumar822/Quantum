@@ -32,7 +32,22 @@ export const userApi = createApi({
         url: "/get-all-users",
         method: "GET",
       }),
-      providesTags: ["Refreshing_user"]
+      providesTags: ["Refreshing_user"],
+    }),
+    deleteUser: builder.mutation({
+      query: (userId) => ({
+        url: `/delete-user/${userId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Refreshing_user"],
+    }),
+    updateUser: builder.mutation({
+      query: ({ formData, userId }) => ({
+        url: `/update-user/${userId}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["Refreshing_user"],
     }),
   }),
 });
@@ -41,4 +56,6 @@ export const {
   useRegistrationMutation,
   useLoginMutation,
   useGetALlUsersQuery,
+  useDeleteUserMutation,
+  useUpdateUserMutation,
 } = userApi;

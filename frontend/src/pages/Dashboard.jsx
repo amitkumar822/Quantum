@@ -173,7 +173,7 @@ const Dashboard = () => {
               
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <span className="text-primary font-medium">
-                  {user?.profile?.url ? <img src={user?.profile?.url} alt="" /> : <>{user?.name
+                  {user?.profile?.url ? <img className="w-10 h-10 rounded-full" src={user?.profile?.url} alt="" /> : <>{user?.name
                     ?.split(" ")
                     .map((n) => n[0])
                     .join("")

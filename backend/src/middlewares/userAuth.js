@@ -6,8 +6,6 @@ import { ApiError } from "../../utils/ApiError.js";
 export const isAuthenticated = asyncHandler(async (req, res, next) => {
   let accessToken = req.cookies?.accessToken;
   const refreshToken = req.cookies?.refreshToken;
-  console.log("Token: ",req.cookies);
-  
 
   if (!accessToken && !refreshToken) {
     throw new ApiError(401, "Please log in...");

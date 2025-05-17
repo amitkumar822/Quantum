@@ -24,7 +24,7 @@ const router = createBrowserRouter(
       </Route>
 
       {/* ✅ Protect Agent Dashboard Route (Only Agent Can Access) */}
-      <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+      <Route element={<ProtectedRoute allowedRoles={["ADMIN", "USER"]} />}>
         <Route path="/dashboard" element={<Dashboard />} />
       </Route>
 
